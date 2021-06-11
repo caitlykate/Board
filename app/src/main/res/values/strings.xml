@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">BulletinBoard</string>
+    <!-- Menu Drawer Strings -->
+    <string name="cat1">Объявления</string>
+    <string name="ad_my">Мои объявления</string>
+    <string name="ad_car">Машины</string>
+    <string name="ad_pc">Компьютеры</string>
+    <string name="ad_smartphone">Смартфоны</string>
+    <string name="ad_dm">Бытовая техника</string>
+    <string name="cat2">Аккаунт</string>
+    <string name="ac_sign_in">Вход</string>
+    <string name="ac_sign_up">Регистрация</string>
+    <string name="ac_sign_out">Выйти</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="not_reg">Войдите или зарегистрируйтесь</string>
+
+    <!-- Sign Dialog Strings -->
+    <string name="email_reset_password_was_sent">На почту было выслано письмо для восстановления пароля</string>
+    <string name="email_reset_message">Для восстановления пароля введите свой email</string>
+    <string name="email_hint">example@mail.com</string>
+    <string name="password_hint">password</string>
+    <string name="sign_up_act">Зарегистрироваться</string>
+    <string name="sign_in_act">Войти</string>
+    <string name="forget_pass_act">Забыли пароль?</string>
+    <string name="sign_up_error">Не удалось зарегистрироваться</string>
+    <string name="sign_in_error">Не удалось войти</string>
+    <string name="sign_in_success">Вы успешно вошли в аккаунт</string>
+    <string name="send_verification_done">На вашу почту была отправлена ссылка для подтверждения аккаунта</string>
+    <string name="send_verification_error">Не удалось отправить e-mail </string>
+    <string name="link_done">Google-аккаунт и e-mail успешно связаны</string>
+
+    <!-- Edit Activity -->
+    <string name="select_country">*Выберите страну</string>
+    <string name="select_city">*Выберите город</string>
+
+</resources>

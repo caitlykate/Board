@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: com.fxn769:pix:1.5.6@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/2d7ae2d759409f6483563876f81ce85d/jetified-pix-1.5.6/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/2d7ae2d759409f6483563876f81ce85d/jetified-pix-1.5.6/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/2d7ae2d759409f6483563876f81ce85d/jetified-pix-1.5.6/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.fxn769/pix/1.5.6/452ef07fb797f4917a10b4c5ec02ff00712bbf86/pix-1.5.6-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.fxn769/pix/1.5.6/572b9609ee5053b436ad852e2beae419d1102deb/pix-1.5.6-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

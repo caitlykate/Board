@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "182441999092",
+    "project_id": "bulletinboardkotlin",
+    "storage_bucket": "bulletinboardkotlin.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:182441999092:android:fc734341ed629a1b93fca1",
+        "android_client_info": {
+          "package_name": "com.caitlykate.bulletinboard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "182441999092-nvo2p0vr34rl6k00q2ee1979jbjvuodc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.caitlykate.bulletinboard",
+            "certificate_hash": "146812e73332efc43f276c06b242bd742b25519e"
+          }
+        },
+        {
+          "client_id": "182441999092-8su4rsk9vhtpdbm6tlfbf9hiismfm174.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzvUE6oXwyyynFewGNZA6S4I4IIFKNB68"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "182441999092-8su4rsk9vhtpdbm6tlfbf9hiismfm174.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
