@@ -2,8 +2,8 @@ package com.caitlykate.bulletinboard.act
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.os.Bundle
-import android.provider.SyncStateContract.Helpers.update
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -12,10 +12,8 @@ import com.caitlykate.bulletinboard.R
 import com.caitlykate.bulletinboard.adapters.EditAdsViewPagerImgAdapter
 import com.caitlykate.bulletinboard.databinding.ActivityEditAdsBinding
 import com.caitlykate.bulletinboard.dialogs.DialogSpinnerHelper
-import com.caitlykate.bulletinboard.dialogs.RcViewDialogSpinnerAdapter
 import com.caitlykate.bulletinboard.frag.FragmentCloseInterface
 import com.caitlykate.bulletinboard.frag.ImageListFrag
-import com.caitlykate.bulletinboard.frag.SelectImageItem
 import com.caitlykate.bulletinboard.utils.CityHelper
 import com.caitlykate.bulletinboard.utils.ImagePicker
 import com.fxn.pix.Pix
@@ -23,6 +21,7 @@ import com.fxn.utility.PermUtil
 
 
 class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
+    private var chooseImageFrag: ImageListFrag? = null
     lateinit var rootElement: ActivityEditAdsBinding
     private val dialog = DialogSpinnerHelper()
     private lateinit var imageAdapter: EditAdsViewPagerImgAdapter
@@ -46,18 +45,12 @@ class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == ImagePicker.REQUEST_CODE_GET_IMAGES) {
-            if (data!=null) {
+            if (data != null) {
                 val returnValues = data.getStringArrayListExtra(Pix.IMAGE_RESULTS)
-                /*Log.d("MyLog", "Image: ${returnValue?.get(0)}")
-                Log.d("MyLog", "Image: ${returnValue?.get(1)}")
-                Log.d("MyLog", "Image: ${returnValue?.get(2)}")*/
-                //ImagePicker.getImages(this)
-                if (returnValues?.size!! > 1) {
-                    rootElement.scrollViewMain.visibility = View.GONE
-                    val fm = supportFragmentManager.beginTransaction()
-                    fm.replace(R.id.placeHolder, ImageListFrag(this, returnValues))
-                    fm.commit()
-                }
+
+                if (returnValues?.size!! > 1 && chooseImageFrag == null)  openChooseImageFrag(returnValues)
+                //else if (returnValues.size == 1 && chooseImageFrag == null) imageAdapter.update(returnValues)
+                else if (chooseImageFrag != null) chooseImageFrag?.updateAdapter(returnValues)
             }
         }
     }
@@ -111,12 +104,29 @@ class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
         }
 
     }
-    fun onClickGetImages(view: View){
-        ImagePicker.getImages(this, 3)
+    fun onClickGetImagesOrOpenFrag(view: View) {
+        if (imageAdapter.mainArray.size == 0)
+            ImagePicker.getImages(this, 3)
+        else {
+            //битмапы есть - переносим во фрагмент
+            openChooseImageFrag(null)
+            chooseImageFrag?.updateAdapterFromEdit(imageAdapter.mainArray)
+        }
     }
 
-    override fun onFragClose(list: ArrayList<SelectImageItem>) {                                    //запускается, когда возвращаемся из фрагмента редактирования
+    override fun onFragClose(list: ArrayList<Bitmap>) {                                    //запускается, когда возвращаемся из фрагмента редактирования
         rootElement.scrollViewMain.visibility = View.VISIBLE
         imageAdapter.update(list)
+        chooseImageFrag = null
+    }
+    
+    private fun openChooseImageFrag(imgList: ArrayList<String>?){
+        Log.d("MyLog", "1")
+        chooseImageFrag = ImageListFrag(this, imgList)
+        rootElement.scrollViewMain.visibility = View.GONE
+        val fm = supportFragmentManager.beginTransaction()
+        fm.replace(R.id.placeHolder, chooseImageFrag!!)
+        fm.commit()
+        Log.d("MyLog", "2")
     }
 }
