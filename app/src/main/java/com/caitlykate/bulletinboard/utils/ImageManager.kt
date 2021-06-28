@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.exifinterface.media.ExifInterface
 import com.squareup.picasso.Picasso
@@ -83,6 +84,13 @@ object ImageManager {
 
         return@withContext bitmapList
 
+    }
+
+    fun chooseScaleType(im: ImageView, bitmap: Bitmap){
+        if (bitmap.width>bitmap.height){
+            //обрезаем
+            im.scaleType = ImageView.ScaleType.CENTER_CROP
+        } else im.scaleType = ImageView.ScaleType.CENTER_INSIDE
     }
 
 }

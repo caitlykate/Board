@@ -8,4 +8,10 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="night_blue">#4d7bb0</color>
+    <color name="bottoms_color">#1E776D</color>
+    <color name="toolbar_colour">#C9D1C8</color>
+    <color name="light_grey">#F1F1F1</color>
+    <color name="grey">#BDBDBD</color>
+    <color name="dark_grey">#636363</color>
+    <color name="graphite">#3A3A3A</color>
 </resources>

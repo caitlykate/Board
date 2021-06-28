@@ -2,12 +2,14 @@ package com.caitlykate.bulletinboard.utils
 
 import android.view.View
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.caitlykate.bulletinboard.R
 
 class ItemTouchMoveCallback(val adapter: ItemTouchAdapterInterface): ItemTouchHelper.Callback() {
+
     override fun getMovementFlags(          //устанавливаем какие именно движения отслеживаем
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
@@ -31,6 +33,8 @@ class ItemTouchMoveCallback(val adapter: ItemTouchAdapterInterface): ItemTouchHe
             viewHolder?.itemView?.alpha = 0.5f
             viewHolder?.itemView?.findViewById<TextView>(R.id.tvTitle)?.visibility = View.INVISIBLE
             viewHolder?.itemView?.findViewById<ImageButton>(R.id.imBtDrag)?.visibility = View.INVISIBLE
+            viewHolder?.itemView?.findViewById<ImageButton>(R.id.imBtDelete)?.visibility = View.INVISIBLE
+            viewHolder?.itemView?.findViewById<LinearLayout>(R.id.underline)?.visibility = View.INVISIBLE
         }
 
         super.onSelectedChanged(viewHolder, actionState)
@@ -42,6 +46,8 @@ class ItemTouchMoveCallback(val adapter: ItemTouchAdapterInterface): ItemTouchHe
         viewHolder.itemView.alpha = 1.0f
         viewHolder?.itemView?.findViewById<TextView>(R.id.tvTitle)?.visibility = View.VISIBLE
         viewHolder?.itemView?.findViewById<ImageButton>(R.id.imBtDrag)?.visibility = View.VISIBLE
+        viewHolder?.itemView?.findViewById<ImageButton>(R.id.imBtDelete)?.visibility = View.VISIBLE
+        viewHolder?.itemView?.findViewById<LinearLayout>(R.id.underline)?.visibility = View.VISIBLE
         adapter.onClear()
         super.clearView(recyclerView, viewHolder)
     }

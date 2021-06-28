@@ -15,9 +15,13 @@ import com.caitlykate.bulletinboard.dialogs.DialogSpinnerHelper
 import com.caitlykate.bulletinboard.frag.FragmentCloseInterface
 import com.caitlykate.bulletinboard.frag.ImageListFrag
 import com.caitlykate.bulletinboard.utils.CityHelper
+import com.caitlykate.bulletinboard.utils.ImageManager
 import com.caitlykate.bulletinboard.utils.ImagePicker
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
@@ -49,7 +53,15 @@ class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
                 val returnValues = data.getStringArrayListExtra(Pix.IMAGE_RESULTS)
 
                 if (returnValues?.size!! > 1 && chooseImageFrag == null)  openChooseImageFrag(returnValues)
-                //else if (returnValues.size == 1 && chooseImageFrag == null) imageAdapter.update(returnValues)
+                else if (returnValues.size == 1 && chooseImageFrag == null) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        rootElement.pBarLoad.visibility = View.VISIBLE
+                        val bitMapArray = ImageManager.imageResize(returnValues) as ArrayList<Bitmap>
+                        rootElement.pBarLoad.visibility = View.GONE
+                        imageAdapter.update(bitMapArray)
+
+                    }
+                }
                 else if (chooseImageFrag != null) chooseImageFrag?.updateAdapter(returnValues)
             }
         }

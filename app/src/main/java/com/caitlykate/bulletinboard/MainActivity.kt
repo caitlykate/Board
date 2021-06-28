@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             Log.d("MyLog", "Sign in result")
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
-                val account = task.getResult(ApiException::class.java)      //следим зв ошибками, которые могут произойти во время регистрации или входа
+                val account = task.getResult(ApiException::class.java)      //следим зf ошибками, которые могут произойти во время регистрации или входа
                 Log.d("MyLog", "Api 0")
                 if (account != null){
                     dialogHelper.accHelper.signInFirebaseWithGoogle(account.idToken!!)

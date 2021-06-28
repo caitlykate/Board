@@ -1,17 +1,20 @@
 package com.caitlykate.bulletinboard.frag
 
+import android.app.Activity
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.caitlykate.bulletinboard.R
 import com.caitlykate.bulletinboard.databinding.ListImageFragBinding
+import com.caitlykate.bulletinboard.dialoghelper.ProgressDialog
+import com.caitlykate.bulletinboard.utils.AdapterCallback
 import com.caitlykate.bulletinboard.utils.ImageManager
 import com.caitlykate.bulletinboard.utils.ImagePicker
 import com.caitlykate.bulletinboard.utils.ItemTouchMoveCallback
@@ -20,81 +23,97 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class ImageListFrag(val fragCloseInterface: FragmentCloseInterface, private val newList: ArrayList<String>?): Fragment() {
-    lateinit var rootElement: ListImageFragBinding
-    val adapter = SelectImageRwAdapter()
+class ImageListFrag(private val fragCloseInterface: FragmentCloseInterface, private val newList: ArrayList<String>?): BaseAdsFrag(), AdapterCallback {
+
+    val adapter = SelectImageRwAdapter(this)
     private val dragCallback = ItemTouchMoveCallback(adapter)
     val touchHelper = ItemTouchHelper(dragCallback)
+    var addImageItem: MenuItem? = null
     private var job: Job? = null
+    lateinit var binding: ListImageFragBinding
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        //return inflater.inflate(R.layout.list_image_frag, container, false)
-        //super.onCreateView(inflater, container, savedInstanceState)
-        rootElement = ListImageFragBinding.inflate(inflater)
-        return rootElement.root
+        binding = ListImageFragBinding.inflate(layoutInflater)
+        adView = binding.adView                        //инициализируем переменную родительского класса
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar()
-        //val rcView = view.findViewById<RecyclerView>(R.id.rcViewSelectImage)
-        touchHelper.attachToRecyclerView(rootElement.rcViewSelectImage)
-        rootElement.rcViewSelectImage.layoutManager = LinearLayoutManager(activity)                    //указываем, что наши элемнеты в РВ будут располагаться друг под другом
-        rootElement.rcViewSelectImage.adapter = adapter
-        if (newList != null)                                        //выбрали картинки со смартфона и есть ссылки
-        job = CoroutineScope(Dispatchers.Main).launch {             //сама корутина выполняется на основном потоке
-            val bitmapList = ImageManager.imageResize(newList)      //одна из задач корутины выполняется на второстепенном
-            //дальше не запустится, пока suspend fun выше не выполнится
-            Log.d("MyLog", "Result: $bitmapList")
-            adapter.updateAdapter(bitmapList, true)
-        } else{                                                     //уже готовые битмапы из EditAdsAct
+        binding.apply {         //чтобы не писать везде binding.
+            touchHelper.attachToRecyclerView(rcViewSelectImage)
+            rcViewSelectImage.layoutManager =
+                LinearLayoutManager(activity)                    //указываем, что наши элемнеты в РВ будут располагаться друг под другом
+            rcViewSelectImage.adapter = adapter
+        }
+        if (newList != null) resizeSelectedImages(newList, true)                                       //выбрали картинки со смартфона и есть ссылки
+        else{                                                     //уже готовые битмапы из EditAdsAct
 
         }
-
-
+    }
+    override fun onItemDelete() {
+        addImageItem?.isVisible = true
     }
 
     override fun onDetach() {
         super.onDetach()
         fragCloseInterface.onFragClose(adapter.mainArray)
-        /*Log.d("MyLog", "Title 0: ${adapter.mainArray[0].title}")
-        Log.d("MyLog", "Title 1: ${adapter.mainArray[1].title}")
-        Log.d("MyLog", "Title 2: ${adapter.mainArray[2].title}")*/
         job?.cancel()
+    }
+
+    private fun resizeSelectedImages(newList: ArrayList<String>, needClear: Boolean){
+        job = CoroutineScope(Dispatchers.Main).launch {             //сама корутина выполняется на основном потоке
+            val dialog = ProgressDialog.createProgressDialog(activity as Activity)
+            val bitmapList = ImageManager.imageResize(newList)      //одна из задач корутины выполняется на второстепенном
+            //дальше не запустится, пока suspend fun выше не выполнится
+            Log.d("MyLog", "Result: $bitmapList")
+            dialog.dismiss()
+            adapter.updateAdapter(bitmapList, needClear)
+            if (adapter.mainArray.size > 2) addImageItem?.isVisible = false
+        }
     }
 
     //настраиваем тулбар: подключаем меню, слушатель нажатий
     private fun setUpToolbar(){
-        rootElement.tb.inflateMenu(R.menu.main_choose_image)
-        val deleteImageItem = rootElement.tb.menu.findItem(R.id.id_delete_image)
-        val addImageItem = rootElement.tb.menu.findItem(R.id.id_add_image)
+        binding.apply {
+            tb.inflateMenu(R.menu.main_choose_image)
+            val deleteImageItem = tb.menu.findItem(R.id.id_delete_image)
+            addImageItem = tb.menu.findItem(R.id.id_add_image)
 
-        //слушатель нажатий для кнопки назад на тулбаре
-        rootElement.tb.setNavigationOnClickListener{
-            activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()     //закрываем фрагмент
-        }
+            //слушатель нажатий для кнопки назад на тулбаре
+            tb.setNavigationOnClickListener {
+                showInterAd()   //прописана в базовом фрагменте
+            }
 
-        deleteImageItem.setOnMenuItemClickListener {
-            adapter.updateAdapter(ArrayList(), true)
-            true
-        }
-        addImageItem.setOnMenuItemClickListener {
-            val imageCount = ImagePicker.MAX_IMAGE_COUNT - adapter.mainArray.size
-            ImagePicker.getImages(activity as AppCompatActivity, imageCount)
-            true
+            deleteImageItem.setOnMenuItemClickListener {
+                adapter.updateAdapter(ArrayList(), true)
+                addImageItem?.isVisible = true
+                true
+            }
+            addImageItem?.setOnMenuItemClickListener {
+                val imageCount = ImagePicker.MAX_IMAGE_COUNT - adapter.mainArray.size
+                ImagePicker.getImages(activity as AppCompatActivity, imageCount)
+                true
+            }
         }
     }
 
     fun updateAdapter(newList: ArrayList<String>){
-        job = CoroutineScope(Dispatchers.Main).launch {
-            val bitmapList = ImageManager.imageResize(newList)
-            Log.d("MyLog", "Result: $bitmapList")
-            adapter.updateAdapter(bitmapList, false)
-        }
+        resizeSelectedImages(newList, false)
 
     }
 
     fun updateAdapterFromEdit(bitmapList: List<Bitmap>){
         adapter.updateAdapter(bitmapList, true)
     }
+
+    override fun onClose() {
+        super.onClose()
+        //удаляем фрагмент, остается активити
+        activity?.supportFragmentManager?.beginTransaction()?.remove(this@ImageListFrag)?.commit()
+    }
+
+
 
 }
