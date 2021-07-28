@@ -35,5 +35,17 @@
     <!-- Edit Activity -->
     <string name="select_country">*Выберите страну</string>
     <string name="select_city">*Выберите город</string>
+    <string name="country">Страна</string>
+    <string name="city">Город</string>
+    <string name="tel">Телефон</string>
+    <string name="select_tel">*Введите номер</string>
+    <string name="with_send">С отправкой</string>
+    <string name="category">Категория</string>
+    <string name="select_category">*Выберите категорию</string>
+    <string name="price">Цена</string>
+    <string name="select_price">*Укажите цену</string>
+    <string name="description">Описание</string>
+    <string name="select_description">Введите описание</string>
+    <string name="ready_button">Готово</string>
 
 </resources>

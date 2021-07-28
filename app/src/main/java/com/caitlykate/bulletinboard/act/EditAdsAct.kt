@@ -10,6 +10,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.caitlykate.bulletinboard.R
 import com.caitlykate.bulletinboard.adapters.EditAdsViewPagerImgAdapter
+import com.caitlykate.bulletinboard.data.Ad
+import com.caitlykate.bulletinboard.database.DBManager
 import com.caitlykate.bulletinboard.databinding.ActivityEditAdsBinding
 import com.caitlykate.bulletinboard.dialogs.DialogSpinnerHelper
 import com.caitlykate.bulletinboard.frag.FragmentCloseInterface
@@ -29,12 +31,14 @@ class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
     lateinit var rootElement: ActivityEditAdsBinding
     private val dialog = DialogSpinnerHelper()
     private lateinit var imageAdapter: EditAdsViewPagerImgAdapter
+    private val dbManager = DBManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         rootElement = ActivityEditAdsBinding.inflate(layoutInflater)        //инициализируем
         setContentView(rootElement.root)                                    //запускаем
         init()
+        dbManager.readDataFromDb()
     }
         /*
         //создаем адаптер, подключаем к спиннеру
@@ -94,7 +98,7 @@ class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
         }
     }
 
-    //onClicks
+    ////////////////////onClicks
 
     fun onClickSelectCountry(view: View){
         val listCountry = CityHelper.getAllCountries(this)
@@ -116,6 +120,20 @@ class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
         }
 
     }
+
+    fun onClickSelectCat(view: View){
+       val listCat = resources.getStringArray(R.array.category).toMutableList() as ArrayList
+        dialog.showSpinnerDialog(this, listCat, rootElement.tvCat)
+
+    }
+
+    fun onClickPublish(view: View){
+        val dbManager = DBManager()
+        dbManager.publishAd(fillAd())
+
+
+    }
+
     fun onClickGetImagesOrOpenFrag(view: View) {
         if (imageAdapter.mainArray.size == 0)
             ImagePicker.getImages(this, 3)
@@ -125,6 +143,7 @@ class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
             chooseImageFrag?.updateAdapterFromEdit(imageAdapter.mainArray)
         }
     }
+
 
     override fun onFragClose(list: ArrayList<Bitmap>) {                                    //запускается, когда возвращаемся из фрагмента редактирования
         rootElement.scrollViewMain.visibility = View.VISIBLE
@@ -140,5 +159,21 @@ class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
         fm.replace(R.id.placeHolder, chooseImageFrag!!)
         fm.commit()
         Log.d("MyLog", "2")
+    }
+
+    private fun fillAd(): Ad{
+        val ad: Ad
+        rootElement.apply {
+            ad = Ad(tvCountry.text.toString(),
+                    tvCities.text.toString(),
+                    edTel.text.toString(),
+                    checkBox.isChecked.toString(),
+                    tvCat.text.toString(),
+                    edPrice.text.toString(),
+                    edDescription.text.toString(),
+                    dbManager.db.push().key           //генерирует уникальный ключ
+            )
+        }
+        return ad
     }
 }
