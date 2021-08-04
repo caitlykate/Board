@@ -34,6 +34,8 @@ class EditAdsViewPagerImgAdapter: RecyclerView.Adapter<EditAdsViewPagerImgAdapte
         }
     }
 
+
+
     fun update(newArray: ArrayList<Bitmap>){
         mainArray.clear()
         mainArray.addAll(newArray)

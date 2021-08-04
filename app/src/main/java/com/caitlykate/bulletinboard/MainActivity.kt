@@ -11,7 +11,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.caitlykate.bulletinboard.act.EditAdsAct
+import com.caitlykate.bulletinboard.adapters.AdsRcAdapter
+import com.caitlykate.bulletinboard.data.Ad
+import com.caitlykate.bulletinboard.database.DBManager
+import com.caitlykate.bulletinboard.database.ReadDataCallback
 import com.caitlykate.bulletinboard.databinding.ActivityMainBinding
 import com.caitlykate.bulletinboard.dialoghelper.DialogConst
 import com.caitlykate.bulletinboard.dialoghelper.DialogHelper
@@ -21,21 +26,27 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ReadDataCallback {
     private lateinit var rootElement: ActivityMainBinding                       //вместо lateinit можно было ActivityMainBinding? = null
                                                                                 //rootElement - binding
     private val dialogHelper = DialogHelper(this)
-    val mAuth = FirebaseAuth.getInstance()                                      //Чтобы получить обьект FirebaseAuth нужно вызвать
-                                                                                // статический метод getInstance()
+    val mAuth = Firebase.auth                                      //Или чтобы получить обьект FirebaseAuth можно вызвать
+                                                                   //статический метод FirebaseAuth.getInstance()
     private lateinit var tvAccount: TextView
+    val dbManager = DBManager(this)
+    val adapter = AdsRcAdapter(mAuth)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         rootElement = ActivityMainBinding.inflate(layoutInflater)
         setContentView(rootElement.root)
         init()
+        initRecyclerView()
+        dbManager.readDataFromDb()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {        //Когда меню открывается впервые
@@ -71,7 +82,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onStart() {
         super.onStart()
-        uiApdate(mAuth.currentUser)
+        uiUpdate(mAuth.currentUser)
     }
 
     private fun init() {
@@ -83,6 +94,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         rootElement.navView.setNavigationItemSelectedListener (this)                                            //наш navView будут передавать событие(нажатие)
                                                                                                                 // сюда (в этот класс)
         tvAccount = rootElement.navView.getHeaderView(0).findViewById(R.id.tvAccountEmail)
+    }
+
+    private fun initRecyclerView(){
+        rootElement.apply {
+            //LayoutManager отвечает за позиционирование view-компонентов в RecyclerView, а также за определение того, когда следует переиспользовать view-компоненты, которые больше не видны пользователю.
+            mainContent.rcView.layoutManager = LinearLayoutManager(this@MainActivity)
+            mainContent.rcView.adapter = adapter
+        }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {                                            //принимаем и обрабатываем нажатие на меню
@@ -110,7 +129,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 dialogHelper.createSignDialog(DialogConst.SIGN_UP_STATE)
             }
             R.id.id_sign_out -> {
-                uiApdate(null)
+                uiUpdate(null)
                 mAuth.signOut()
                 dialogHelper.accHelper.signOutG()
             }
@@ -124,11 +143,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    fun uiApdate(user:FirebaseUser?){
+    fun uiUpdate(user:FirebaseUser?){
         tvAccount.text = if (user == null) {
             resources.getString(R.string.not_reg)
         } else {
             user.email
         }
+    }
+
+    override fun readData(list: List<Ad>) {
+        adapter.updateAdapter(list)
     }
 }

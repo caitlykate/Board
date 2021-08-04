@@ -22,7 +22,7 @@ class AccountHelper(act: MainActivity) {                            //из ак�
 
                 if (task.isSuccessful){
                     sendEmailVerification(task.result?.user!!)
-                    act.uiApdate(task.result?.user)
+                    act.uiUpdate(task.result?.user)
                 } else {
                     Toast.makeText(act, R.string.sign_up_error, Toast.LENGTH_LONG).show()
                     Log.d("MyLog", "Exception: " + task.exception)
@@ -60,7 +60,7 @@ class AccountHelper(act: MainActivity) {                            //из ак�
 
                 if (task.isSuccessful){
                     Toast.makeText(act, R.string.sign_in_success, Toast.LENGTH_LONG).show()
-                    act.uiApdate(task.result?.user)
+                    act.uiUpdate(task.result?.user)
                 } else {
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
                         val exception = task.exception as FirebaseAuthInvalidCredentialsException
@@ -139,7 +139,7 @@ class AccountHelper(act: MainActivity) {                            //из ак�
         act.mAuth.signInWithCredential(credential).addOnCompleteListener { task ->
             if (task.isSuccessful){
                 Toast.makeText(act,"Sign in done", Toast.LENGTH_LONG).show()
-                act.uiApdate(task.result?.user)
+                act.uiUpdate(task.result?.user)
             }
         }
     }

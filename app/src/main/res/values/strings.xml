@@ -33,6 +33,8 @@
     <string name="link_done">Google-аккаунт и e-mail успешно связаны</string>
 
     <!-- Edit Activity -->
+    <string name="title">Заголовок</string>
+    <string name="select_title">*Выберите заголовок</string>
     <string name="select_country">*Выберите страну</string>
     <string name="select_city">*Выберите город</string>
     <string name="country">Страна</string>

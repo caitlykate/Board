@@ -31,7 +31,7 @@ class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
     lateinit var rootElement: ActivityEditAdsBinding
     private val dialog = DialogSpinnerHelper()
     private lateinit var imageAdapter: EditAdsViewPagerImgAdapter
-    private val dbManager = DBManager()
+    private val dbManager = DBManager(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,7 +128,7 @@ class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
     }
 
     fun onClickPublish(view: View){
-        val dbManager = DBManager()
+
         dbManager.publishAd(fillAd())
 
 
@@ -164,14 +164,18 @@ class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
     private fun fillAd(): Ad{
         val ad: Ad
         rootElement.apply {
+            //нужно будет добавить проверку полей
             ad = Ad(tvCountry.text.toString(),
                     tvCities.text.toString(),
                     edTel.text.toString(),
                     checkBox.isChecked.toString(),
+                    edTitle.text.toString(),
                     tvCat.text.toString(),
                     edPrice.text.toString(),
                     edDescription.text.toString(),
-                    dbManager.db.push().key           //генерирует уникальный ключ
+                    dbManager.db.push().key,           //генерирует уникальный ключ
+                                                      //если написать просто dbManager.db. key, то вернет path (main)
+                    dbManager.auth.uid
             )
         }
         return ad
