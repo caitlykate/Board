@@ -96,7 +96,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:text="@string/country"
-                        android:textColor="@color/bottoms_color"
+                        android:textColor="@color/main_green_color"
                         android:textStyle="bold" />
 
                     <TextView
@@ -114,7 +114,7 @@
                         android:layout_height="1dp"
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="10dp"
-                        android:background="@color/bottoms_color"
+                        android:background="@color/main_green_color"
                         android:orientation="horizontal"></LinearLayout>
 
                     <TextView
@@ -124,11 +124,11 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:text="@string/city"
-                        android:textColor="@color/bottoms_color"
+                        android:textColor="@color/main_green_color"
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/tvCities"
+                        android:id="@+id/tvCity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:onClick="onClickSelectCity"
@@ -142,7 +142,7 @@
                         android:layout_height="1dp"
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="10dp"
-                        android:background="@color/bottoms_color"
+                        android:background="@color/main_green_color"
                         android:orientation="horizontal"></LinearLayout>
 
                     <TextView
@@ -152,7 +152,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:text="@string/tel"
-                        android:textColor="@color/bottoms_color"
+                        android:textColor="@color/main_green_color"
                         android:textStyle="bold" />
 
                     <EditText
@@ -173,11 +173,11 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="5dp"
-                        android:background="@color/bottoms_color"
+                        android:background="@color/main_green_color"
                         android:orientation="horizontal"></LinearLayout>
 
                     <CheckBox
-                        android:id="@+id/checkBox"
+                        android:id="@+id/checkBoxWithSend"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
@@ -206,7 +206,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:text="@string/title"
-                        android:textColor="@color/bottoms_color"
+                        android:textColor="@color/main_green_color"
                         android:textStyle="bold" />
 
                     <EditText
@@ -227,7 +227,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:text="@string/category"
-                        android:textColor="@color/bottoms_color"
+                        android:textColor="@color/main_green_color"
                         android:textStyle="bold" />
 
                     <TextView
@@ -245,7 +245,7 @@
                         android:layout_height="1dp"
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="10dp"
-                        android:background="@color/bottoms_color"
+                        android:background="@color/main_green_color"
                         android:orientation="horizontal"></LinearLayout>
 
                     <TextView
@@ -255,7 +255,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:text="@string/price"
-                        android:textColor="@color/bottoms_color"
+                        android:textColor="@color/main_green_color"
                         android:textStyle="bold" />
 
                     <EditText
@@ -275,7 +275,7 @@
                         android:layout_height="1dp"
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="10dp"
-                        android:background="@color/bottoms_color"
+                        android:background="@color/main_green_color"
                         android:orientation="horizontal"></LinearLayout>
 
                     <TextView
@@ -285,7 +285,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:text="@string/description"
-                        android:textColor="@color/bottoms_color"
+                        android:textColor="@color/main_green_color"
                         android:textStyle="bold" />
 
                     <EditText
@@ -306,7 +306,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="5dp"
-                        android:background="@color/bottoms_color"
+                        android:background="@color/main_green_color"
                         android:orientation="horizontal"></LinearLayout>
 
                 </LinearLayout>
@@ -320,7 +320,7 @@
                 android:onClick="onClickPublish"
                 android:text="@string/ready_button"
                 android:textColor="@color/white"
-                app:backgroundTint="@color/bottoms_color" />
+                app:backgroundTint="@color/main_green_color" />
 
         </LinearLayout>
     </ScrollView>

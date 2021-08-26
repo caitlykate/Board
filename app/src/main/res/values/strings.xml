@@ -3,8 +3,10 @@
     <string name="ad_id">ca-app-pub-3940256099942544/6300978111</string>
     <string name="ad_inter_id">ca-app-pub-3940256099942544/1033173712</string>
     <!-- Menu Drawer Strings -->
-    <string name="cat1">Объявления</string>
-    <string name="ad_my">Мои объявления</string>
+    <string name="ads">Объявления</string>
+    <string name="all_ads">Все объявления</string>
+    <string name="my_ads">Мои объявления</string>
+    <string name="fav_ads">Избранное</string>
     <string name="ad_car">Машины</string>
     <string name="ad_pc">Компьютеры</string>
     <string name="ad_smartphone">Смартфоны</string>

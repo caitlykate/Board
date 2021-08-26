@@ -143,7 +143,7 @@
                     android:orientation="horizontal">
 
                     <ImageButton
-                        android:id="@+id/imEditAd"
+                        android:id="@+id/ibEditAd"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"

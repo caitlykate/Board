@@ -8,10 +8,11 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.caitlykate.bulletinboard.MainActivity
 import com.caitlykate.bulletinboard.R
 import com.caitlykate.bulletinboard.adapters.EditAdsViewPagerImgAdapter
-import com.caitlykate.bulletinboard.data.Ad
-import com.caitlykate.bulletinboard.database.DBManager
+import com.caitlykate.bulletinboard.model.Ad
+import com.caitlykate.bulletinboard.model.DBManager
 import com.caitlykate.bulletinboard.databinding.ActivityEditAdsBinding
 import com.caitlykate.bulletinboard.dialogs.DialogSpinnerHelper
 import com.caitlykate.bulletinboard.frag.FragmentCloseInterface
@@ -31,14 +32,15 @@ class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
     lateinit var rootElement: ActivityEditAdsBinding
     private val dialog = DialogSpinnerHelper()
     private lateinit var imageAdapter: EditAdsViewPagerImgAdapter
-    private val dbManager = DBManager(null)
+    private val dbManager = DBManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         rootElement = ActivityEditAdsBinding.inflate(layoutInflater)        //инициализируем
         setContentView(rootElement.root)                                    //запускаем
         init()
-        dbManager.readDataFromDb()
+        //dbManager.readDataFromDb()
+        checkEditState()
     }
         /*
         //создаем адаптер, подключаем к спиннеру
@@ -48,6 +50,28 @@ class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
     private fun init(){
         imageAdapter = EditAdsViewPagerImgAdapter()
         rootElement.vpImages.adapter = imageAdapter
+    }
+
+    private fun checkEditState(){
+        if (isEditState()){
+            fillViews(intent.getSerializableExtra(MainActivity.ADS_DATA) as Ad)
+        }
+
+    }
+
+    private fun isEditState(): Boolean{
+        return intent.getBooleanExtra(MainActivity.EDIT_STATE, false)
+    }
+
+    private fun fillViews(ad: Ad) = with(rootElement){
+        tvCountry.text = ad.country
+        tvCity.text = ad.city
+        edTel.setText(ad.tel)
+        checkBoxWithSend.isChecked = ad.withSend.toBoolean()
+        tvCat.text = ad.category
+        edTitle.setText(ad.title)
+        edPrice.setText(ad.price)
+        edDescription.setText(ad.description)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -103,7 +127,7 @@ class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
     fun onClickSelectCountry(view: View){
         val listCountry = CityHelper.getAllCountries(this)
         dialog.showSpinnerDialog(this, listCountry, rootElement.tvCountry)
-        if (rootElement.tvCities.text != getString(R.string.select_city)) rootElement.tvCities.setText(
+        if (rootElement.tvCity.text != getString(R.string.select_city)) rootElement.tvCity.setText(
             getString(
                 R.string.select_city
             )
@@ -116,7 +140,7 @@ class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
             Toast.makeText(this, "Необходимо сначала выбрать страну", Toast.LENGTH_SHORT).show()
         } else {
             val listCities = CityHelper.getAllCities(selectedCountry, this)
-            dialog.showSpinnerDialog(this, listCities, rootElement.tvCities)
+            dialog.showSpinnerDialog(this, listCities, rootElement.tvCity)
         }
 
     }
@@ -166,9 +190,9 @@ class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
         rootElement.apply {
             //нужно будет добавить проверку полей
             ad = Ad(tvCountry.text.toString(),
-                    tvCities.text.toString(),
+                    tvCity.text.toString(),
                     edTel.text.toString(),
-                    checkBox.isChecked.toString(),
+                    checkBoxWithSend.isChecked.toString(),
                     edTitle.text.toString(),
                     tvCat.text.toString(),
                     edPrice.text.toString(),

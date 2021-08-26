@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <item android:title="@string/cat1">
+    <item android:title="@string/ads">
         <menu>
             <item
-                android:title="@string/ad_my"
+                android:title="@string/my_ads"
                 android:id="@+id/id_my_ads"
                 />
             <item

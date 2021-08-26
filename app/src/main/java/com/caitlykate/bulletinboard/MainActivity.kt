@@ -5,40 +5,37 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.caitlykate.bulletinboard.act.EditAdsAct
 import com.caitlykate.bulletinboard.adapters.AdsRcAdapter
-import com.caitlykate.bulletinboard.data.Ad
-import com.caitlykate.bulletinboard.database.DBManager
-import com.caitlykate.bulletinboard.database.ReadDataCallback
 import com.caitlykate.bulletinboard.databinding.ActivityMainBinding
 import com.caitlykate.bulletinboard.dialoghelper.DialogConst
 import com.caitlykate.bulletinboard.dialoghelper.DialogHelper
 import com.caitlykate.bulletinboard.dialoghelper.GoogleAccConst
+import com.caitlykate.bulletinboard.viewmodel.FirebaseViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.navigation.NavigationView
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ReadDataCallback {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var rootElement: ActivityMainBinding                       //вместо lateinit можно было ActivityMainBinding? = null
                                                                                 //rootElement - binding
     private val dialogHelper = DialogHelper(this)
     val mAuth = Firebase.auth                                      //Или чтобы получить обьект FirebaseAuth можно вызвать
                                                                    //статический метод FirebaseAuth.getInstance()
     private lateinit var tvAccount: TextView
-    val dbManager = DBManager(this)
-    val adapter = AdsRcAdapter(mAuth)
+    private val firebaseViewModel: FirebaseViewModel by viewModels()        //'androidx.activity:activity-ktx:1.3.1'
+    val adapter = AdsRcAdapter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,9 +43,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(rootElement.root)
         init()
         initRecyclerView()
-        dbManager.readDataFromDb()
+        initViewModel()
+        firebaseViewModel.loadAllAds()
+        bottomMenuOnClick()
     }
-
+/*
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {        //Когда меню открывается впервые
         menuInflater.inflate(R.menu.main_menu,menu)
         return super.onCreateOptionsMenu(menu)
@@ -62,7 +61,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         return super.onOptionsItemSelected(item)
     }
-
+*/
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(requestCode == GoogleAccConst.GOOGLE_SIGN_IN_REQUEST_CODE){
             Log.d("MyLog", "Sign in result")
@@ -85,6 +84,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         uiUpdate(mAuth.currentUser)
     }
 
+    //когда возвращаемся на экран
+    override fun onResume() {
+        super.onResume()
+        rootElement.mainContent.bNavView.selectedItemId = R.id.id_home
+    }
+
+    private fun initViewModel(){
+        firebaseViewModel.liveAdsData.observe(this, {
+            //что происходит когда данные обновлены
+            adapter.updateAdapter(it)
+        })
+
+    }
+
     private fun init() {
         setSupportActionBar(rootElement.mainContent.toolbar)        //уведомляем систему что у нас вой тулбар
         val toggle = ActionBarDrawerToggle(this, rootElement.drawerLayout, rootElement.mainContent.toolbar, R.string.open, R.string.close)   //создаем кнопку
@@ -94,6 +107,31 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         rootElement.navView.setNavigationItemSelectedListener (this)                                            //наш navView будут передавать событие(нажатие)
                                                                                                                 // сюда (в этот класс)
         tvAccount = rootElement.navView.getHeaderView(0).findViewById(R.id.tvAccountEmail)
+    }
+
+    private fun bottomMenuOnClick() = with(rootElement){
+        mainContent.bNavView.setOnNavigationItemSelectedListener { item ->
+            when(item.itemId){
+                R.id.id_new_ad -> {
+                    //запускаем новый акт; предаем контекст, на кот находимся, и акт на кот хотим перейти
+                    val i = Intent(this@MainActivity,EditAdsAct::class.java)
+                    startActivity(i)
+                }
+                R.id.id_my_ads -> {
+                    firebaseViewModel.loadMyAds()
+                    mainContent.toolbar.title = getString(R.string.my_ads)
+                }
+                R.id.id_favs -> {
+                    Toast.makeText(this@MainActivity,"Избранное"+mAuth.uid, Toast.LENGTH_SHORT).show()
+                    mainContent.toolbar.title = getString(R.string.fav_ads)
+                }
+                R.id.id_home -> {
+                    firebaseViewModel.loadAllAds()
+                    mainContent.toolbar.title = getString(R.string.all_ads)
+                }
+            }
+            true
+        }
     }
 
     private fun initRecyclerView(){
@@ -151,7 +189,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    override fun readData(list: List<Ad>) {
-        adapter.updateAdapter(list)
+    companion object{
+        const val EDIT_STATE = "edit_state"
+        const val ADS_DATA = "ads_data"
     }
+
 }
