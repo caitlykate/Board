@@ -33,6 +33,8 @@ class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
     private val dialog = DialogSpinnerHelper()
     private lateinit var imageAdapter: EditAdsViewPagerImgAdapter
     private val dbManager = DBManager()
+    private var isEditState = false
+    private var ad: Ad? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +56,9 @@ class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
 
     private fun checkEditState(){
         if (isEditState()){
-            fillViews(intent.getSerializableExtra(MainActivity.ADS_DATA) as Ad)
+            isEditState = true
+            ad = intent.getSerializableExtra(MainActivity.ADS_DATA) as Ad
+            if (ad != null) fillViews(ad!!)
         }
 
     }
@@ -152,10 +156,23 @@ class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
     }
 
     fun onClickPublish(view: View){
+        var tempAd = fillAd()
+        if (isEditState){
+            dbManager.publishAd(tempAd.copy(key = ad?.key), onPublishFinish())
+        } else {
+            dbManager.publishAd(tempAd, onPublishFinish())
+        }
+    }
 
-        dbManager.publishAd(fillAd())
+    //ф-я возвращает интерфейс, кот. мы передаем в функцию publishAd, как только данные опубликовались в базе,
+    // запускается addOnCompleteListener, кот. вызывает ф-ю onFinish, инструкция к которой описана здесь
+    private fun onPublishFinish(): DBManager.FinishWorkListener{
+        return object: DBManager.FinishWorkListener{
+            override fun onFinish() {
+                finish()
+            }
 
-
+        }
     }
 
     fun onClickGetImagesOrOpenFrag(view: View) {

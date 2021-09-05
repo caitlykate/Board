@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -18,6 +19,7 @@ import com.caitlykate.bulletinboard.databinding.ActivityMainBinding
 import com.caitlykate.bulletinboard.dialoghelper.DialogConst
 import com.caitlykate.bulletinboard.dialoghelper.DialogHelper
 import com.caitlykate.bulletinboard.dialoghelper.GoogleAccConst
+import com.caitlykate.bulletinboard.model.Ad
 import com.caitlykate.bulletinboard.viewmodel.FirebaseViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
@@ -27,7 +29,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, AdsRcAdapter.Listener {
     private lateinit var rootElement: ActivityMainBinding                       //вместо lateinit можно было ActivityMainBinding? = null
                                                                                 //rootElement - binding
     private val dialogHelper = DialogHelper(this)
@@ -94,6 +96,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         firebaseViewModel.liveAdsData.observe(this, {
             //что происходит когда данные обновлены
             adapter.updateAdapter(it)
+            rootElement.mainContent.tvEmpty.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
         })
 
     }
@@ -122,7 +125,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     mainContent.toolbar.title = getString(R.string.my_ads)
                 }
                 R.id.id_favs -> {
-                    Toast.makeText(this@MainActivity,"Избранное"+mAuth.uid, Toast.LENGTH_SHORT).show()
+                    firebaseViewModel.loadMyFavs()
                     mainContent.toolbar.title = getString(R.string.fav_ads)
                 }
                 R.id.id_home -> {
@@ -192,6 +195,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     companion object{
         const val EDIT_STATE = "edit_state"
         const val ADS_DATA = "ads_data"
+    }
+
+    override fun onDeleteItem(ad: Ad) {
+        firebaseViewModel.deleteItem(ad)
+    }
+
+    override fun onAdViewed(ad: Ad) {
+        firebaseViewModel.adViewed(ad)
+    }
+
+    override fun onFavClicked(ad: Ad) {
+        firebaseViewModel.onFavClick(ad)
     }
 
 }

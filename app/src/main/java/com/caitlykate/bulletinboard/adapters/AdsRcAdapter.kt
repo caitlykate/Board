@@ -4,8 +4,10 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.caitlykate.bulletinboard.MainActivity
+import com.caitlykate.bulletinboard.R
 import com.caitlykate.bulletinboard.act.EditAdsAct
 import com.caitlykate.bulletinboard.model.Ad
 import com.caitlykate.bulletinboard.databinding.AdListItemBinding
@@ -31,23 +33,46 @@ class AdsRcAdapter(val act: MainActivity): RecyclerView.Adapter<AdsRcAdapter.Ads
     }
 
     fun updateAdapter(newList: List<Ad>){
+        //определяем похожи ли элементы и какую ф-ю применить
+        //например notifyDataSetChanged()/notifyItemRangeChanged()
+        val diffResult = DiffUtil.calculateDiff(DiffUtilHelper(adArray,newList))
+        diffResult.dispatchUpdatesTo(this)  //применить наши изменения (анимация)
         adArray.clear()
         adArray.addAll(newList)
-        notifyDataSetChanged()          //не рисуем заново вью, а перезаполняем имеющиеся новыми данными
+        //notifyDataSetChanged()          //не рисуем заново вью, а перезаполняем имеющиеся новыми данными
+
     }
 
+    //отвечает за одно объявление
     //каждый раз, когда создается новый элемент - создается класс AdHolder
     //при скролле назад объявления не создаются заново, а берутся из памяти (из AdHolder)
-    class AdsHolder(val binding: AdListItemBinding, val act: MainActivity): RecyclerView.ViewHolder(binding.root) {
+    class AdsHolder(val binding: AdListItemBinding, val act: MainActivity) :
+        RecyclerView.ViewHolder(binding.root) {
 
-        fun setData(ad: Ad) = with(binding){
+        //здесь заполняется
+        fun setData(ad: Ad) = with(binding) {
 
-                tvTitle.text = ad.title
-                tvDescription.text = ad.description
-                tvPrice.text = ad.price + " ₽"
-
+            tvTitle.text = ad.title
+            tvDescription.text = ad.description
+            tvPrice.text = ad.price + " ₽"
+            tvViewCounter.text = ad.viewsCounter
+            tvFavCounter.text = ad.favCounter
+            if (ad.isFav) {
+                ibFav.setImageResource(R.drawable.ic_fav_pressed)
+            } else {
+                ibFav.setImageResource(R.drawable.ic_fav_normal)
+            }
             showEditPanel(isOwner(ad))
+            itemView.setOnClickListener {
+                act.onAdViewed(ad)
+            }
+            ibFav.setOnClickListener {
+                act.onFavClicked(ad)
+            }
             ibEditAd.setOnClickListener(onClickEdit(ad))
+            ibDeleteAd.setOnClickListener {
+                act.onDeleteItem(ad)
+            }
 
 
         }
@@ -71,5 +96,14 @@ class AdsRcAdapter(val act: MainActivity): RecyclerView.Adapter<AdsRcAdapter.Ads
             else binding.editPanel.visibility = View.GONE
         }
 
+    }
+
+    //и-с, который будем запускать для того, чтобы при нажатии на кнопку удалить,
+    // у нас этот интерфейс запустился на mainAct и там уже мы запускаем ф-ии для удаления из базы и адаптера
+    interface Listener{
+        //можно было реализовать с помощью одной функции и уже в MainAct проверять на что мы нажали
+        fun onDeleteItem(ad: Ad)
+        fun onAdViewed(ad: Ad)
+        fun onFavClicked(ad: Ad)
     }
 }
