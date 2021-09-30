@@ -9,8 +9,7 @@ import com.caitlykate.bulletinboard.R
 import com.caitlykate.bulletinboard.accounthelper.AccountHelper
 import com.caitlykate.bulletinboard.databinding.SignDialogBinding
 
-class DialogHelper(act: MainActivity) {
-    private val act = act                                                               //из конструктора нужно передать на уровень класса
+class DialogHelper(val act: MainActivity) {
     val accHelper = AccountHelper(act)
 
 

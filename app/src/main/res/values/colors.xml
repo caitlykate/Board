@@ -15,4 +15,5 @@
     <color name="dark_grey">#636363</color>
     <color name="graphite">#3A3A3A</color>
     <color name="orange">#E0A142</color>
+    <color name="trans_grey">#AA363636</color>
 </resources>

@@ -4,16 +4,26 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Projects/AndroidProjects/BulletinBoard/app/src/main/res/drawable/bottom_nav_selector.xml" value="0.26666666666666666" />
+        <entry key="..\:/Projects/AndroidProjects/BulletinBoard/app/src/main/res/drawable/ic_edit.xml" value="0.2703125" />
+        <entry key="..\:/Projects/AndroidProjects/BulletinBoard/app/src/main/res/drawable/ic_email.xml" value="0.2703125" />
         <entry key="..\:/Projects/AndroidProjects/BulletinBoard/app/src/main/res/drawable/ic_fav_normal.xml" value="0.10677083333333333" />
         <entry key="..\:/Projects/AndroidProjects/BulletinBoard/app/src/main/res/drawable/ic_fav_pressed.xml" value="0.10677083333333333" />
         <entry key="..\:/Projects/AndroidProjects/BulletinBoard/app/src/main/res/drawable/ic_home.xml" value="0.26666666666666666" />
         <entry key="..\:/Projects/AndroidProjects/BulletinBoard/app/src/main/res/drawable/side_nav_bar.xml" value="0.1" />
+        <entry key="..\:/Projects/AndroidProjects/BulletinBoard/app/src/main/res/layout/activity_description.xml" value="0.264" />
         <entry key="..\:/Projects/AndroidProjects/BulletinBoard/app/src/main/res/layout/activity_edit_ads.xml" value="0.25052083333333336" />
-        <entry key="..\:/Projects/AndroidProjects/BulletinBoard/app/src/main/res/layout/ad_list_item.xml" value="0.4" />
+        <entry key="..\:/Projects/AndroidProjects/BulletinBoard/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
+        <entry key="..\:/Projects/AndroidProjects/BulletinBoard/app/src/main/res/layout/ad_list_item.xml" value="0.264" />
+        <entry key="..\:/Projects/AndroidProjects/BulletinBoard/app/src/main/res/layout/list_image_frag.xml" value="0.25025641025641027" />
         <entry key="..\:/Projects/AndroidProjects/BulletinBoard/app/src/main/res/layout/main_content.xml" value="0.25052083333333336" />
         <entry key="..\:/Projects/AndroidProjects/BulletinBoard/app/src/main/res/layout/nav_header_main.xml" value="0.1" />
+        <entry key="..\:/Projects/AndroidProjects/BulletinBoard/app/src/main/res/layout/progress_dialog_layout.xml" value="0.25025641025641027" />
+        <entry key="..\:/Projects/AndroidProjects/BulletinBoard/app/src/main/res/layout/select_image_frag_item.xml" value="0.264" />
+        <entry key="..\:/Projects/AndroidProjects/BulletinBoard/app/src/main/res/layout/sp_list_item.xml" value="0.25025641025641027" />
         <entry key="..\:/Projects/AndroidProjects/BulletinBoard/app/src/main/res/menu/bottom_main_menu.xml" value="0.25052083333333336" />
         <entry key="..\:/Projects/AndroidProjects/BulletinBoard/app/src/main/res/menu/drawer_main_menu.xml" value="0.4" />
+        <entry key="..\:/Projects/AndroidProjects/BulletinBoard/app/src/main/res/menu/main_choose_image.xml" value="0.25416666666666665" />
+        <entry key="..\:/Projects/AndroidProjects/BulletinBoard/app/src/main/res/menu/main_menu.xml" value="0.25416666666666665" />
       </map>
     </option>
   </component>

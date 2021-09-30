@@ -2,6 +2,10 @@
     <string name="app_name">BulletinBoard</string>
     <string name="ad_id">ca-app-pub-3940256099942544/6300978111</string>
     <string name="ad_inter_id">ca-app-pub-3940256099942544/1033173712</string>
+
+    <string name="price_rub">%1$s ₽</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
     <!-- Menu Drawer Strings -->
     <string name="ads">Объявления</string>
     <string name="all_ads">Все объявления</string>
@@ -19,6 +23,9 @@
     <string name="close">Close</string>
     <string name="not_reg">Войдите или зарегистрируйтесь</string>
 
+    <!-- Main Act -->
+
+
     <!-- Sign Dialog Strings -->
     <string name="email_reset_password_was_sent">На почту было выслано письмо для восстановления пароля</string>
     <string name="email_reset_message">Для восстановления пароля введите свой email</string>
@@ -33,6 +40,7 @@
     <string name="send_verification_done">На вашу почту была отправлена ссылка для подтверждения аккаунта</string>
     <string name="send_verification_error">Не удалось отправить e-mail </string>
     <string name="link_done">Google-аккаунт и e-mail успешно связаны</string>
+    <string name="guest">Гость</string>
 
     <!-- Edit Activity -->
     <string name="title">Заголовок</string>
@@ -43,6 +51,7 @@
     <string name="city">Город</string>
     <string name="tel">Телефон</string>
     <string name="select_tel">*Введите номер</string>
+    <string name="email">Email</string>
     <string name="with_send">С отправкой</string>
     <string name="category">Категория</string>
     <string name="select_category">*Выберите категорию</string>

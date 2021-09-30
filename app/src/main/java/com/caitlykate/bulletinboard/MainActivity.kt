@@ -9,10 +9,14 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.caitlykate.bulletinboard.accounthelper.AccountHelper
+import com.caitlykate.bulletinboard.act.DescriptionActivity
 import com.caitlykate.bulletinboard.act.EditAdsAct
 import com.caitlykate.bulletinboard.adapters.AdsRcAdapter
 import com.caitlykate.bulletinboard.databinding.ActivityMainBinding
@@ -38,6 +42,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var tvAccount: TextView
     private val firebaseViewModel: FirebaseViewModel by viewModels()        //'androidx.activity:activity-ktx:1.3.1'
     val adapter = AdsRcAdapter(this)
+    lateinit var googleSignInLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +68,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         return super.onOptionsItemSelected(item)
     }
-*/
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(requestCode == GoogleAccConst.GOOGLE_SIGN_IN_REQUEST_CODE){
             Log.d("MyLog", "Sign in result")
@@ -79,7 +84,27 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }*/
+
+    private fun onActivityResult() {
+        //новый колбэк, который будет получать данные когда мы выберем аккаунт
+        googleSignInLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()){
+            val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+            try {
+                val account =
+                    task.getResult(ApiException::class.java)      //следим зf ошибками, которые могут произойти во время регистрации или входа
+                Log.d("MyLog", "Api 0")
+                if (account != null) {
+                    dialogHelper.accHelper.signInFirebaseWithGoogle(account.idToken!!)
+                }
+            } catch (e: ApiException) {
+                Log.d("MyLog", "Api error: ${e.message}")
+            }
+        }
+
     }
+
 
     override fun onStart() {
         super.onStart()
@@ -102,6 +127,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun init() {
+        onActivityResult()
         setSupportActionBar(rootElement.mainContent.toolbar)        //уведомляем систему что у нас вой тулбар
         val toggle = ActionBarDrawerToggle(this, rootElement.drawerLayout, rootElement.mainContent.toolbar, R.string.open, R.string.close)   //создаем кнопку
         rootElement.drawerLayout.addDrawerListener(toggle)                                                      //указываем, что наше меню (drawerLayout) будет
@@ -170,6 +196,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 dialogHelper.createSignDialog(DialogConst.SIGN_UP_STATE)
             }
             R.id.id_sign_out -> {
+                if (mAuth.currentUser?.isAnonymous == true) {
+                    rootElement.drawerLayout.closeDrawer(GravityCompat.START)
+                    return true
+                }
                 uiUpdate(null)
                 mAuth.signOut()
                 dialogHelper.accHelper.signOutG()
@@ -185,10 +215,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     fun uiUpdate(user:FirebaseUser?){
-        tvAccount.text = if (user == null) {
-            resources.getString(R.string.not_reg)
-        } else {
-            user.email
+        if (user == null) {
+            dialogHelper.accHelper.signInAnonymously(object: AccountHelper.Listener{
+                override fun onComplete() {
+                    tvAccount.setText(R.string.guest)       //либо tvAccount.text = getString(R.string.guest)
+                }
+
+            })
+        } else if (user.isAnonymous) {
+            tvAccount.setText(R.string.guest)
+        } else if (!user.isAnonymous) {
+            tvAccount.text = user.email
         }
     }
 
@@ -203,6 +240,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onAdViewed(ad: Ad) {
         firebaseViewModel.adViewed(ad)
+        val intent = Intent(this, DescriptionActivity::class.java)
+        intent.putExtra("AD",ad)
+        startActivity(intent)
     }
 
     override fun onFavClicked(ad: Ad) {

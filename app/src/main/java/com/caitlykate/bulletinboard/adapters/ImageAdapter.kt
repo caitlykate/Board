@@ -1,7 +1,6 @@
 package com.caitlykate.bulletinboard.adapters
 
 import android.graphics.Bitmap
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,14 +8,15 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.caitlykate.bulletinboard.R
 
-class EditAdsViewPagerImgAdapter: RecyclerView.Adapter<EditAdsViewPagerImgAdapter.ImageHolder>() {
+//применяем к ViewPager2
+class ImageAdapter: RecyclerView.Adapter<ImageAdapter.ImageHolder>() {
     val mainArray = ArrayList<Bitmap>()
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EditAdsViewPagerImgAdapter.ImageHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageAdapter.ImageHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.view_pager_item, parent, false)
         return ImageHolder(view)
     }
 
-    override fun onBindViewHolder(holder: EditAdsViewPagerImgAdapter.ImageHolder, position: Int) {   //достаем эл-ты из массива и заполняем VH
+    override fun onBindViewHolder(holder: ImageAdapter.ImageHolder, position: Int) {   //достаем эл-ты из массива и заполняем VH
         holder.setData(mainArray[position])
     }
 

@@ -7,11 +7,13 @@ import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 
 class DBManager {
     //объект класса вместе с ссылкой на нашу бд, кот. знает куда и что нужно записывать
     val db = Firebase.database.getReference(MAIN_NODE)     //.reference - в корень бд
     val auth = Firebase.auth
+    val dbStorage= Firebase.storage.getReference(MAIN_NODE)
 
     //у него есть спец функции для записи
     fun publishAd(ad: Ad, finishListener: FinishWorkListener){

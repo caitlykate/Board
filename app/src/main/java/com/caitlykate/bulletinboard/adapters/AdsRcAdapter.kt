@@ -8,10 +8,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.caitlykate.bulletinboard.MainActivity
 import com.caitlykate.bulletinboard.R
+import com.caitlykate.bulletinboard.act.DescriptionActivity
 import com.caitlykate.bulletinboard.act.EditAdsAct
 import com.caitlykate.bulletinboard.model.Ad
 import com.caitlykate.bulletinboard.databinding.AdListItemBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.squareup.picasso.Picasso
 
 class AdsRcAdapter(val act: MainActivity): RecyclerView.Adapter<AdsRcAdapter.AdsHolder>() {
     val adArray = ArrayList<Ad>()
@@ -57,24 +59,32 @@ class AdsRcAdapter(val act: MainActivity): RecyclerView.Adapter<AdsRcAdapter.Ads
             tvPrice.text = ad.price + " ₽"
             tvViewCounter.text = ad.viewsCounter
             tvFavCounter.text = ad.favCounter
-            if (ad.isFav) {
-                ibFav.setImageResource(R.drawable.ic_fav_pressed)
-            } else {
-                ibFav.setImageResource(R.drawable.ic_fav_normal)
-            }
+            Picasso.get().load(ad.mainImage).into(mainImage)
+            isFav(ad)
             showEditPanel(isOwner(ad))
+            mainOnClick(ad)
+        }
+
+        private fun isFav(ad: Ad){
+            if (ad.isFav) {
+                binding.ibFav.setImageResource(R.drawable.ic_fav_pressed)
+            } else {
+                binding.ibFav.setImageResource(R.drawable.ic_fav_normal)
+            }
+        }
+
+        private fun mainOnClick(ad: Ad) = with(binding){
+            //при нажатии на весь элемент открываем DescriptionActivity и добавляем +1 просмотр
             itemView.setOnClickListener {
                 act.onAdViewed(ad)
             }
             ibFav.setOnClickListener {
-                act.onFavClicked(ad)
+                if (act.mAuth.currentUser?.isAnonymous == false) act.onFavClicked(ad)
             }
             ibEditAd.setOnClickListener(onClickEdit(ad))
             ibDeleteAd.setOnClickListener {
                 act.onDeleteItem(ad)
             }
-
-
         }
 
         private  fun onClickEdit(ad: Ad): View.OnClickListener{
