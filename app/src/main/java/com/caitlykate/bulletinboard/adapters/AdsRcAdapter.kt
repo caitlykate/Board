@@ -35,6 +35,16 @@ class AdsRcAdapter(val act: MainActivity): RecyclerView.Adapter<AdsRcAdapter.Ads
     }
 
     fun updateAdapter(newList: List<Ad>){
+        val tempArray = ArrayList<Ad>()
+        tempArray.addAll(adArray)
+        tempArray.addAll(newList)
+        val diffResult = DiffUtil.calculateDiff(DiffUtilHelper(adArray,tempArray))
+        diffResult.dispatchUpdatesTo(this)
+        adArray.clear()
+        adArray.addAll(tempArray)
+    }
+
+    fun updateAdapterWithClear(newList: List<Ad>){
         //определяем похожи ли элементы и какую ф-ю применить
         //например notifyDataSetChanged()/notifyItemRangeChanged()
         val diffResult = DiffUtil.calculateDiff(DiffUtilHelper(adArray,newList))

@@ -160,7 +160,8 @@ rootElement.spCountry.adapter = adapter*/
                 dbManager.db.push().key,           //генерирует уникальный ключ
                 //если написать просто dbManager.db. key, то вернет path (main)
                 dbManager.auth.uid,
-                "empty","empty","empty"
+                "empty","empty","empty",
+                System.currentTimeMillis().toString()
             )
         }
         return ad

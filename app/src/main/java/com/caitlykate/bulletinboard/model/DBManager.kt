@@ -18,7 +18,10 @@ class DBManager {
     //у него есть спец функции для записи
     fun publishAd(ad: Ad, finishListener: FinishWorkListener){
         if (auth.uid != null) db.child(ad.key?: "empty").child(auth.uid!!).child(AD_NODE).setValue(ad).addOnCompleteListener{
-            finishListener.onFinish()
+            val adFilter = AdFilter(ad.time,"${ad.category}_${ad.time}")
+            if (auth.uid != null) db.child(ad.key?: "empty").child(FILTER_NODE).setValue(adFilter).addOnCompleteListener{
+                finishListener.onFinish()
+            }
         }
     }
 
@@ -53,8 +56,25 @@ class DBManager {
         }
     }
 
-    fun getAllAds(readDataCallback: ReadDataCallback?){
-        val query = db.orderByChild( auth.uid + "/ad/price")
+    fun getAllAdsByCatFirstPage(cat: String, readDataCallback: ReadDataCallback?){
+        val query = db.orderByChild( "/filter/catTime")
+            .startAt(cat).endAt(cat + "\uf8ff").limitToLast(ADS_LIMIT)
+        readDataFromDb(query,readDataCallback)
+    }
+
+    fun getAllAdsByCatNextPage(catTime: String, readDataCallback: ReadDataCallback?){
+        val query = db.orderByChild( "/filter/catTime")
+            .endBefore(catTime).limitToLast(ADS_LIMIT)
+        readDataFromDb(query,readDataCallback)
+    }
+
+    fun getAllAdsFirstPage(readDataCallback: ReadDataCallback?){
+        val query = db.orderByChild( "/filter/time").limitToLast(ADS_LIMIT)    //берем N последних объявлений
+        readDataFromDb(query,readDataCallback)
+    }
+
+    fun getAllAdsNextPage(time: String, readDataCallback: ReadDataCallback?){
+        val query = db.orderByChild( "/filter/time").endBefore(time).limitToLast(ADS_LIMIT)    //берем N последних объявлений до уже загруженных в ленту
         readDataFromDb(query,readDataCallback)
     }
 
@@ -123,8 +143,10 @@ class DBManager {
 
     companion object{
         const val AD_NODE = "ad"
+        const val FILTER_NODE = "filter"
         const val MAIN_NODE = "main"
         const val INFO_NODE = "info"
         const val FAVS_NODE = "favs"
+        const val ADS_LIMIT = 2
     }
 }

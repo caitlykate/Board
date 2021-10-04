@@ -12,8 +12,35 @@ class FirebaseViewModel : ViewModel() {
     //берет наши данные, следит когда view доступна, чтобы обновлять
     val liveAdsData = MutableLiveData<ArrayList<Ad>>()
 
-    fun loadAllAds() {
-        dbManager.getAllAds(object : DBManager.ReadDataCallback {
+    fun loadAllAdsFirstPage() {
+        dbManager.getAllAdsFirstPage(object : DBManager.ReadDataCallback {
+            //запускается когда мы получили данные на дбМенеджере
+            override fun readData(list: ArrayList<Ad>) {
+                liveAdsData.value = list
+            }
+        })
+    }
+
+    fun loadAllAdsNextPage(time: String) {
+        dbManager.getAllAdsNextPage(time, object : DBManager.ReadDataCallback {
+            //запускается когда мы получили данные на дбМенеджере
+            override fun readData(list: ArrayList<Ad>) {
+                liveAdsData.value = list
+            }
+        })
+    }
+
+    fun loadAllAdsByCat(cat: String) {
+        dbManager.getAllAdsByCatFirstPage(cat, object : DBManager.ReadDataCallback {
+            //запускается когда мы получили данные на дбМенеджере
+            override fun readData(list: ArrayList<Ad>) {
+                liveAdsData.value = list
+            }
+        })
+    }
+
+    fun loadAllAdsByCatNextPage(catTime: String) {
+        dbManager.getAllAdsByCatNextPage(catTime, object : DBManager.ReadDataCallback {
             //запускается когда мы получили данные на дбМенеджере
             override fun readData(list: ArrayList<Ad>) {
                 liveAdsData.value = list

@@ -20,6 +20,8 @@ data class Ad(
     val image2: String? = null,
     val image3: String? = null,
 
+    var time: String = "0",
+
     var isFav: Boolean = false,
     var favCounter: String = "0",
 
