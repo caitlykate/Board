@@ -1,9 +1,9 @@
 <component name="libraryTable">
   <library name="Gradle: io.ak1.pix:piximagepicker:1.6.2@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/40f33409179dc61b85e45d244cc90152/jetified-piximagepicker-1.6.2/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/40f33409179dc61b85e45d244cc90152/jetified-piximagepicker-1.6.2/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/40f33409179dc61b85e45d244cc90152/jetified-piximagepicker-1.6.2/jars/classes.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/026f4aef0e283d286b85e46a2f15bb72/jetified-piximagepicker-1.6.2/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/026f4aef0e283d286b85e46a2f15bb72/jetified-piximagepicker-1.6.2/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/026f4aef0e283d286b85e46a2f15bb72/jetified-piximagepicker-1.6.2/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.ak1.pix/piximagepicker/1.6.2/92fe2a85091b667712915ad4e5908f70bc95f80c/piximagepicker-1.6.2-javadoc.jar!/" />

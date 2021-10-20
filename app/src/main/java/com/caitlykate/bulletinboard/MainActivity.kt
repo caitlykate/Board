@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -23,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.caitlykate.bulletinboard.accounthelper.AccountHelper
 import com.caitlykate.bulletinboard.act.DescriptionActivity
 import com.caitlykate.bulletinboard.act.EditAdsAct
+import com.caitlykate.bulletinboard.act.FilterActivity
 import com.caitlykate.bulletinboard.adapters.AdsRcAdapter
 import com.caitlykate.bulletinboard.databinding.ActivityMainBinding
 import com.caitlykate.bulletinboard.dialoghelper.DialogConst
@@ -49,8 +51,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val firebaseViewModel: FirebaseViewModel by viewModels()        //'androidx.activity:activity-ktx:1.3.1'
     val adapter = AdsRcAdapter(this)
     lateinit var googleSignInLauncher: ActivityResultLauncher<Intent>
+    lateinit var filterLauncher: ActivityResultLauncher<Intent>
     private var clearUpdate: Boolean = true
     private var currentCategory: String? = null
+    private var filter: String = "empty"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +66,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //firebaseViewModel.loadAllAds("0")
         bottomMenuOnClick()
         scrollListener()
+
     }
 
     private fun init() {
@@ -77,6 +82,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         tvAccount = binding.navView.getHeaderView(0).findViewById(R.id.tvAccountEmail)
         imAccount = binding.navView.getHeaderView(0).findViewById(R.id.imAccountImage)
         navViewSettings()
+        onActivityResultFilter()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.id_filter) {
+            val i = Intent(this@MainActivity, FilterActivity::class.java).apply {
+                putExtra(FilterActivity.FILTER_KEY, filter)
+            }
+            filterLauncher.launch(i)
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun initRecyclerView(){
@@ -120,6 +141,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
+    private fun onActivityResultFilter() {
+        //новый колбэк, который будет получать данные когда мы выберем фильтр
+        filterLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()){
+            if (it.resultCode == RESULT_OK){
+                filter = it.data?.getStringExtra(FilterActivity.FILTER_KEY)!!
+                Log.d("MyLog", "Filter: $filter")
+            }
+        }
+    }
 
     override fun onStart() {
         super.onStart()

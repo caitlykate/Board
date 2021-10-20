@@ -61,4 +61,7 @@
     <string name="select_description">Введите описание</string>
     <string name="ready_button">Готово</string>
 
+    <!-- Filter Activity -->
+    <string name="apply">Применить</string>
+
 </resources>

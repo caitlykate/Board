@@ -1,5 +1,7 @@
 package com.caitlykate.bulletinboard.model
 
+import android.util.Log
+import com.caitlykate.bulletinboard.utils.FilterManager
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -18,7 +20,7 @@ class DBManager {
     //у него есть спец функции для записи
     fun publishAd(ad: Ad, finishListener: FinishWorkListener){
         if (auth.uid != null) db.child(ad.key?: "empty").child(auth.uid!!).child(AD_NODE).setValue(ad).addOnCompleteListener{
-            val adFilter = AdFilter(ad.time,"${ad.category}_${ad.time}")
+            val adFilter = FilterManager.createFilter(ad)
             if (auth.uid != null) db.child(ad.key?: "empty").child(FILTER_NODE).setValue(adFilter).addOnCompleteListener{
                 finishListener.onFinish()
             }
@@ -77,6 +79,7 @@ class DBManager {
         val query = db.orderByChild( "/filter/time").endBefore(time).limitToLast(ADS_LIMIT)    //берем N последних объявлений до уже загруженных в ленту
         readDataFromDb(query,readDataCallback)
     }
+
 
     fun getMyAds(readDataCallback: ReadDataCallback?){
         val query = db.orderByChild( auth.uid + "/ad/uid" ).equalTo(auth.uid)

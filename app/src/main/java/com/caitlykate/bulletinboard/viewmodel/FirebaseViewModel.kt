@@ -1,5 +1,6 @@
 package com.caitlykate.bulletinboard.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.caitlykate.bulletinboard.model.Ad
@@ -38,6 +39,7 @@ class FirebaseViewModel : ViewModel() {
             }
         })
     }
+
 
     fun loadAllAdsByCatNextPage(catTime: String) {
         dbManager.getAllAdsByCatNextPage(catTime, object : DBManager.ReadDataCallback {
