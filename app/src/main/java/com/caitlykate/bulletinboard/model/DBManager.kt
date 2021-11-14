@@ -57,29 +57,50 @@ class DBManager {
             }
         }
     }
-
-    fun getAllAdsByCatFirstPage(cat: String, readDataCallback: ReadDataCallback?){
-        val query = db.orderByChild( "/filter/catTime")
+    //---1Cat---//
+    fun getAllAdsFromCatFirstPage(cat: String, filter: String, readDataCallback: ReadDataCallback?){
+        Log.d("MyLog", "DBManager: Cat $cat Filter $filter")
+        val query = if (filter.isEmpty()) {db.orderByChild( "/filter/cat_time")
             .startAt(cat).endAt(cat + "\uf8ff").limitToLast(ADS_LIMIT)
+            }
+        else {getQueryFromCatByFilter(cat, filter)}
+
         readDataFromDb(query,readDataCallback)
     }
-
-    fun getAllAdsByCatNextPage(catTime: String, readDataCallback: ReadDataCallback?){
-        val query = db.orderByChild( "/filter/catTime")
+    //---NextCat---//
+    fun getAllAdsFromCatNextPage(catTime: String, readDataCallback: ReadDataCallback?){
+        val query = db.orderByChild( "/filter/cat_time")
             .endBefore(catTime).limitToLast(ADS_LIMIT)
         readDataFromDb(query,readDataCallback)
     }
-
-    fun getAllAdsFirstPage(readDataCallback: ReadDataCallback?){
-        val query = db.orderByChild( "/filter/time").limitToLast(ADS_LIMIT)    //берем N последних объявлений
-        readDataFromDb(query,readDataCallback)
+    //---1---//
+    fun getAllAdsFirstPage(filter: String, readDataCallback: ReadDataCallback?){
+        val query = if (filter.isEmpty()) {db.orderByChild( "/filter/time").limitToLast(ADS_LIMIT)}    //берем N последних объявлений
+        else {getQueryByFilter(filter)}
+        readDataFromDb(query, readDataCallback)
     }
-
+    //---Next---//
     fun getAllAdsNextPage(time: String, readDataCallback: ReadDataCallback?){
         val query = db.orderByChild( "/filter/time").endBefore(time).limitToLast(ADS_LIMIT)    //берем N последних объявлений до уже загруженных в ленту
         readDataFromDb(query,readDataCallback)
     }
 
+    private fun getQueryByFilter(filter: String): Query{
+        val orderBy = filter.split("|")[0]
+        val filterContent = filter.split("|")[1]
+        return db.orderByChild( "/filter/$orderBy")
+            .startAt(filterContent).endAt(filterContent + "\uf8ff")
+            .limitToLast(ADS_LIMIT)    //берем N последних объявлений
+    }
+
+    private fun getQueryFromCatByFilter(cat: String,  filter: String): Query{
+        val orderBy = "cat_" + filter.split("|")[0]
+        val filterContent = cat + "_" + filter.split("|")[1]
+        Log.d("MyLog", "DBManager: orderBy $orderBy filterContent $filterContent")
+        return db.orderByChild( "/filter/$orderBy")
+            .startAt(filterContent).endAt(filterContent + "\uf8ff")
+            .limitToLast(ADS_LIMIT)    //берем N последних объявлений
+    }
 
     fun getMyAds(readDataCallback: ReadDataCallback?){
         val query = db.orderByChild( auth.uid + "/ad/uid" ).equalTo(auth.uid)

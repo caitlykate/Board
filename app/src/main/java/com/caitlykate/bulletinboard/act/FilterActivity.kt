@@ -36,6 +36,7 @@ class FilterActivity : AppCompatActivity() {
     private fun actionBarSettings(){
         val actBar = supportActionBar
         actBar?.setDisplayHomeAsUpEnabled(true)
+        actBar?.title = "Фильтр"
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -45,10 +46,10 @@ class FilterActivity : AppCompatActivity() {
 
     private fun getFilter() = with(binding){
         val filter = intent.getStringExtra(FILTER_KEY)
-        if (filter != "empty" && filter != null){
+        if (filter != getString(R.string.empty) && filter != null){
             val filterArray = filter.split("_")
-            if (filterArray[0] != getString(R.string.select_country)) tvCountry.text = filterArray[0]
-            if (filterArray[1] != getString(R.string.select_city)) tvCity.text = filterArray[1]
+            if (filterArray[0] != getString(R.string.empty)) tvCountry.text = filterArray[0]
+            if (filterArray[1] != getString(R.string.empty)) tvCity.text = filterArray[1]
             checkBoxWithSend.isChecked = filterArray[2].toBoolean()
         }
     }
@@ -96,8 +97,11 @@ class FilterActivity : AppCompatActivity() {
         for ((i,s) in arrayTempFilter.withIndex()){
             if (s != getString(R.string.select_country) && s != getString(R.string.select_city) && s.isNotEmpty()){
                 sBuilder.append(s)
-                if (i != arrayTempFilter.size-1) sBuilder.append('_')
+            } else {
+                sBuilder.append(getString(R.string.empty))
+
             }
+            if (i != arrayTempFilter.size-1) sBuilder.append('_')
         }
         return sBuilder.toString()
     }

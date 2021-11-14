@@ -30,6 +30,7 @@ import com.caitlykate.bulletinboard.databinding.ActivityMainBinding
 import com.caitlykate.bulletinboard.dialoghelper.DialogConst
 import com.caitlykate.bulletinboard.dialoghelper.DialogHelper
 import com.caitlykate.bulletinboard.model.Ad
+import com.caitlykate.bulletinboard.utils.FilterManager
 import com.caitlykate.bulletinboard.viewmodel.FirebaseViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
@@ -52,9 +53,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     val adapter = AdsRcAdapter(this)
     lateinit var googleSignInLauncher: ActivityResultLauncher<Intent>
     lateinit var filterLauncher: ActivityResultLauncher<Intent>
-    private var clearUpdate: Boolean = true
+    private var clearUpdate = true
     private var currentCategory: String? = null
-    private var filter: String = "empty"
+    private var filter = "empty"
+    private var filterDB = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +73,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun init() {
         currentCategory = getString(R.string.all_ads)
-        onActivityResult()
+        onActivityResultAcc()
         setSupportActionBar(binding.mainContent.toolbar)        //уведомляем систему что у нас вой тулбар
         val toggle = ActionBarDrawerToggle(this, binding.drawerLayout, binding.mainContent.toolbar, R.string.open, R.string.close)   //создаем кнопку
         binding.drawerLayout.addDrawerListener(toggle)                                                      //указываем, что наше меню (drawerLayout) будет
@@ -111,7 +113,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun initViewModel(){
         firebaseViewModel.liveAdsData.observe(this, {
             //что происходит когда данные обновлены
-            val list = getAdsByCategory(it)
+            val list = getAdsFromCategory(it)
             if (clearUpdate){
                 adapter.updateAdapterWithClear(list)
             } else {
@@ -122,8 +124,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
-    private fun onActivityResult() {
-        //новый колбэк, который будет получать данные когда мы выберем аккаунт
+    private fun onActivityResultAcc() {
+        //колбэк, который будет получать данные когда мы выберем аккаунт
         googleSignInLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()){
             val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
@@ -142,12 +144,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun onActivityResultFilter() {
-        //новый колбэк, который будет получать данные когда мы выберем фильтр
+        //колбэк, который будет получать данные когда мы выберем фильтр
         filterLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()){
             if (it.resultCode == RESULT_OK){
                 filter = it.data?.getStringExtra(FilterActivity.FILTER_KEY)!!
                 Log.d("MyLog", "Filter: $filter")
+                filterDB = FilterManager.getFilterForDB(filter)
+                Log.d("MyLog", "FilterName: $filterDB")
             }
         }
     }
@@ -184,7 +188,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 R.id.id_home -> {
                     currentCategory = getString(R.string.all_ads)
-                    firebaseViewModel.loadAllAdsFirstPage()
+                    firebaseViewModel.loadAllAdsFirstPage(filterDB)
                     mainContent.toolbar.title = getString(R.string.all_ads)
                 }
             }
@@ -201,16 +205,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 myToast.show()
             }
             R.id.id_car -> {
-                getAdsByCat(getString(R.string.ad_car))
+                getAdsFromCat(getString(R.string.ad_car))
             }
             R.id.id_pc -> {
-                getAdsByCat(getString(R.string.ad_pc))
+                getAdsFromCat(getString(R.string.ad_pc))
             }
             R.id.id_smart -> {
-                getAdsByCat(getString(R.string.ad_smartphone))
+                getAdsFromCat(getString(R.string.ad_smartphone))
             }
             R.id.id_dm -> {
-                getAdsByCat(getString(R.string.ad_dm))
+                getAdsFromCat(getString(R.string.ad_dm))
             }
             R.id.id_sign_in -> {
                 dialogHelper.createSignDialog(DialogConst.SIGN_IN_STATE)
@@ -237,10 +241,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    private fun getAdsByCat(cat: String){
+    private fun getAdsFromCat(cat: String){
         currentCategory = cat
         //val catTime = "${cat}_0"
-        firebaseViewModel.loadAllAdsByCat(cat)
+        Log.d("MyLog", "Main: cat $cat filterDB $filterDB")
+        firebaseViewModel.loadAllAdsFromCat(cat, filterDB)
     }
 
     fun uiUpdate(user:FirebaseUser?){
@@ -303,7 +308,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     clearUpdate = false
                     val adsList = firebaseViewModel.liveAdsData.value!!
                     if (adsList.isNotEmpty()) {
-                        getAdsByCatScroll(adsList)
+                        getAdsFromCatScroll(adsList)
                     }
 
                 }
@@ -311,7 +316,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
     }
 
-    private fun getAdsByCatScroll(adsList: ArrayList<Ad>) {
+    private fun getAdsFromCatScroll(adsList: ArrayList<Ad>) {
         adsList[0].let {
             if (currentCategory == getString(R.string.all_ads)) {
                 Log.d("MyLog", "Can't scroll down")
@@ -323,7 +328,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    private fun getAdsByCategory(adList: ArrayList<Ad>): ArrayList<Ad>{
+    private fun getAdsFromCategory(adList: ArrayList<Ad>): ArrayList<Ad>{
         val tempList = ArrayList<Ad>()
         tempList.addAll(adList)
         if (currentCategory != getString(R.string.all_ads)){

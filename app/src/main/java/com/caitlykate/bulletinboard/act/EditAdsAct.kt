@@ -30,22 +30,22 @@ class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
     lateinit var imageAdapter: ImageAdapter
     private val dbManager = DBManager()
     private var isEditState = false
-    private var ad: Ad? = null
+    private var ad: Ad? = null  //заполняем если isEditState
+    lateinit var newAd: Ad  //заполняем когда нажимаем кнопку "готово"
     private var imageIndex = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         rootElement = ActivityEditAdsBinding.inflate(layoutInflater)        //инициализируем
         setContentView(rootElement.root)                                    //запускаем
-        init()
-        //dbManager.readDataFromDb()
+        initAdapters()
         checkEditState()
     }
 
 
     private fun checkEditState(){
-        if (isEditState()){
-            isEditState = true
+        isEditState = isEditState()
+        if (isEditState){
             ad = intent.getSerializableExtra(MainActivity.ADS_DATA) as Ad
             if (ad != null) fillViews(ad!!)
         }
@@ -67,19 +67,8 @@ class EditAdsAct: AppCompatActivity(), FragmentCloseInterface {
         edDescription.setText(ad.description)
         ImageManager.fillImageArray(ad, imageAdapter)
     }
-/*
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        ImagePicker.showSelectedImage(resultCode,requestCode,data,this)
-    }
-*/
-/*
-//создаем адаптер, подключаем к спиннеру
-val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, CityHelper.getAllCountries(this))
-adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)                                          //???
-rootElement.spCountry.adapter = adapter*/
 
-    private fun init(){
+    private fun initAdapters(){
         imageAdapter = ImageAdapter()
         rootElement.vpImages.adapter = imageAdapter
     }
@@ -120,12 +109,11 @@ rootElement.spCountry.adapter = adapter*/
             chooseImageFrag?.updateAdapterFromEdit(imageAdapter.mainArray)
         }
     }
-
-    fun onClickPublish(view: View){
-        ad = fillAd()
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    fun onClickPublish(view: View){                     //нажата кнопка "готово"
+        newAd = fillAd()
         if (isEditState){           //редактирование
-            ad?.copy(key = ad?.key)?.let { dbManager.publishAd(it, onPublishFinish()) }
+            newAd.copy(key = ad?.key).let { dbManager.publishAd(it, onPublishFinish()) }    //ключ из старого объявления
         } else {                       //публикация
             //dbManager.publishAd(tempAd, onPublishFinish())
             uploadAd()
@@ -145,10 +133,10 @@ rootElement.spCountry.adapter = adapter*/
 
 
     private fun fillAd(): Ad{
-        val ad: Ad
+        val adTemp: Ad
         rootElement.apply {
             //нужно будет добавить проверку полей
-            ad = Ad(tvCountry.text.toString(),
+            adTemp = Ad(tvCountry.text.toString(),
                 tvCity.text.toString(),
                 edTel.text.toString(),
                 edEmail.text.toString(),
@@ -164,7 +152,7 @@ rootElement.spCountry.adapter = adapter*/
                 System.currentTimeMillis().toString()
             )
         }
-        return ad
+        return adTemp
     }
 
     //запускается, когда возвращаемся из фрагмента редактирования
@@ -186,19 +174,12 @@ rootElement.spCountry.adapter = adapter*/
     }
 
     private fun uploadAd(){
-        Log.d("MyLog2", "1")
-        Log.d("MyLog2", "ad = $ad")
-        if (imageAdapter.mainArray.size == imageIndex) {
-            Log.d("MyLog2", "2")
-            dbManager.publishAd(ad!!,onPublishFinish())
+        if (imageAdapter.mainArray.size == imageIndex) {    //нет картинок или уже все картинки загружены в хранилище
+            dbManager.publishAd(newAd,onPublishFinish())
             return
         }
-        Log.d("MyLog2", "3")
         val byteArray = prepareImageByteArray(imageAdapter.mainArray[imageIndex])
-        Log.d("MyLog2", "4")
         uploadImage(byteArray){     //этот callback запускается как только мы получили ссылку от картинки, что мы загрузили
-           //dbManager.publishAd(ad!!,onPublishFinish())
-            Log.d("MyLog2", "5")
             nextImage(it.result.toString())
         }
     }
@@ -211,9 +192,9 @@ rootElement.spCountry.adapter = adapter*/
 
     private fun setImageUriToAd(uri: String){
         when (imageIndex){
-            0 -> ad = ad?.copy(mainImage = uri)
-            1 -> ad = ad?.copy(image2 = uri)
-            2 -> ad = ad?.copy(image3 = uri)
+            0 -> newAd = newAd.copy(mainImage = uri)
+            1 -> newAd = newAd.copy(image2 = uri)
+            2 -> newAd = newAd.copy(image3 = uri)
         }
     }
 

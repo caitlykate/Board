@@ -1,6 +1,5 @@
 package com.caitlykate.bulletinboard.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.caitlykate.bulletinboard.model.Ad
@@ -13,8 +12,8 @@ class FirebaseViewModel : ViewModel() {
     //берет наши данные, следит когда view доступна, чтобы обновлять
     val liveAdsData = MutableLiveData<ArrayList<Ad>>()
 
-    fun loadAllAdsFirstPage() {
-        dbManager.getAllAdsFirstPage(object : DBManager.ReadDataCallback {
+    fun loadAllAdsFirstPage(filter: String) {
+        dbManager.getAllAdsFirstPage(filter, object : DBManager.ReadDataCallback {
             //запускается когда мы получили данные на дбМенеджере
             override fun readData(list: ArrayList<Ad>) {
                 liveAdsData.value = list
@@ -31,8 +30,8 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
-    fun loadAllAdsByCat(cat: String) {
-        dbManager.getAllAdsByCatFirstPage(cat, object : DBManager.ReadDataCallback {
+    fun loadAllAdsFromCat(cat: String, filter: String) {
+        dbManager.getAllAdsFromCatFirstPage(cat, filter, object : DBManager.ReadDataCallback {
             //запускается когда мы получили данные на дбМенеджере
             override fun readData(list: ArrayList<Ad>) {
                 liveAdsData.value = list
@@ -42,7 +41,7 @@ class FirebaseViewModel : ViewModel() {
 
 
     fun loadAllAdsByCatNextPage(catTime: String) {
-        dbManager.getAllAdsByCatNextPage(catTime, object : DBManager.ReadDataCallback {
+        dbManager.getAllAdsFromCatNextPage(catTime, object : DBManager.ReadDataCallback {
             //запускается когда мы получили данные на дбМенеджере
             override fun readData(list: ArrayList<Ad>) {
                 liveAdsData.value = list
